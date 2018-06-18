@@ -8,13 +8,15 @@ import android.os.Parcelable;
  */
 //Movie details layout contains title, release date, movie poster, vote average, and plot synopsis.
 public class Movie implements Parcelable{
+    Integer id;
     String title;
     String released;
     String poster;
     String avg_vote;
     String synopsis;
 
-    public Movie (String title,String released,String poster,String avg_vote,String synopsis){
+    public Movie (Integer id,String title,String released,String poster,String avg_vote,String synopsis){
+        this.id=id;
         this.title=title;
         this.released=released;
         this.poster=poster;
@@ -23,6 +25,7 @@ public class Movie implements Parcelable{
     }
 
     private Movie(Parcel in){
+        id=in.readInt();
         title = in.readString();
         released = in.readString();
         poster = in.readString();
@@ -35,10 +38,11 @@ public class Movie implements Parcelable{
         return 0;
     }
 
-    public String toString() { return title + "--" + released + "--" + poster + "--" + avg_vote + "--" + synopsis; }
+    public String toString() { return id + "--" + title + "--" + released + "--" + poster + "--" + avg_vote + "--" + synopsis; }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(title);
         parcel.writeString(released);
         parcel.writeString(poster);

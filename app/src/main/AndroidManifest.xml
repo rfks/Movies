@@ -29,6 +29,11 @@
             android:name=".DetailsActivity"
             android:label="Movie Details"
             />
+
+        <provider
+            android:authorities="com.example.rfks.movies.app"
+            android:name=".data.MoviesProvider"
+            />
     </application>
 
 </manifest>

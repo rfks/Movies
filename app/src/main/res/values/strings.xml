@@ -16,6 +16,10 @@
     <string name="settings_order_by_top_rated_label">Top Rated</string>
     <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 
+    <!-- Label for order-by fav option [CHAR LIMIT=20] -->
+    <string name="settings_order_by_fav_label">Favourite</string>
+    <string name="settings_order_by_fav_value" translatable="false">fav</string>
+
 
     <!-- Text to display in the list when there are no movies [CHAR LIMIT=NONE] -->
     <string name="no_movies">No movies found.</string>

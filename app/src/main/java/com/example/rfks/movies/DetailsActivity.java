@@ -1,12 +1,21 @@
 package com.example.rfks.movies;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.rfks.movies.data.MoviesContract;
+import com.example.rfks.movies.data.MoviesProvider;
 import com.squareup.picasso.Picasso;
 
+import java.net.URI;
 
 
 /**
@@ -41,6 +50,26 @@ public class DetailsActivity extends AppCompatActivity {
         TextView synopsisText = (TextView) findViewById(R.id.synopsis);
         synopsisText.setText(movieDetails.synopsis);
 
+        final CheckBox favBox = (CheckBox) findViewById(R.id.checkBox);
+        if (favourite(movieDetails.id)){
+            favBox.setChecked(true);
+        } else favBox.setChecked(false);
+
+        favBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (favBox.isChecked()){
+                    ContentValues cv = new ContentValues();
+                    cv.put(MoviesContract.MovieEntry._ID,movieDetails.id);
+                    cv.put(MoviesContract.MovieEntry.COLUMN_TITLE,movieDetails.title);
+                    getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI,cv);
+                } else {
+                    String where = MoviesContract.MovieEntry._ID + "=?";
+                    String[] selectionArgs = {movieDetails.id.toString()};
+                    getContentResolver().delete(MoviesContract.MovieEntry.CONTENT_URI,where,selectionArgs);
+                }
+            }
+        });
     }
 
     @Override
@@ -49,4 +78,19 @@ public class DetailsActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    public boolean favourite(Integer id){
+        /*Cursor c1 =getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI,null,null,null,null);
+        Log.v("**********************",c1.getString(c1.getColumnIndex("_id")));*/
+        String[] projection = {MoviesContract.MovieEntry._ID};
+        String selection = MoviesContract.MovieEntry._ID + "=?";
+        String[] selectionArgs = {id.toString()};
+        Cursor cursor = getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI,projection,selection,selectionArgs,null);
+        if (cursor == null || cursor.getCount() < 1) {
+            //Log.v("++++++++++++++++++++","nem jo");
+            return false;
+        } else {
+            //Log.v("--------------------",cursor.getString(cursor.getColumnIndex("_id")));
+            return true;
+        }
+    }
 }

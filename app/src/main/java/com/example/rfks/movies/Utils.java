@@ -159,10 +159,13 @@ public class Utils {
                 JSONObject currentMovie = movieArray.getJSONObject(i);
 
                 // Extract the value for the key called "title"
+                Integer id = currentMovie.getInt("id");
+
+                // Extract the value for the key called "title"
                 String title = currentMovie.getString("title");
 
                 // Extract the value for the key called "release_date"
-                String released = currentMovie.getString("release_date");
+                String released = currentMovie.getString("release_date").substring(0,4);
 
                 // Extract the value for the key called "poster_path"
                 String poster = currentMovie.getString("poster_path");
@@ -174,7 +177,7 @@ public class Utils {
                 String synopsis = currentMovie.getString("overview");
 
                 // Create a new {@link Movie} object with the details from the JSON response.
-                Movie movie = new Movie(title, released, poster, avg_vote, synopsis);
+                Movie movie = new Movie(id, title, released, poster, avg_vote, synopsis);
 
                 // Add the new {@link Article} to the list of articles.
                 movies.add(movie);

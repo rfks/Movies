@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for a list of articles -->
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,11 +8,8 @@
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="90dp"
-        android:numColumns="auto_fit"
 
-        android:stretchMode="spacingWidth"
-        android:gravity="center"/>
+        android:numColumns="auto_fit"/>
 
 
     <!-- Empty view is only visible when the list has no items. -->

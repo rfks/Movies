@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.facebook.stetho.Stetho;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Movie>>,
         SharedPreferences.OnSharedPreferenceChangeListener
 {
-
+    
     private static final String LOG_TAG = MainActivity.class.getName();
 
     /**
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity
      */
     private static final int MOVIE_LOADER_ID = 1;
 
-    static String API_KEY="Your API Key";
+    static String API_KEY=BuildConfig.MOVIE_DB_API_KEY;
     /**
      * Adapter for the list of movies
      */
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
         // Find a reference to the {@link ListView} in the layout
