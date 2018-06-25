@@ -1,8 +1,10 @@
 package com.example.rfks.movies;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,10 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rfks.movies.data.MoviesContract;
-import com.example.rfks.movies.data.MoviesProvider;
 import com.squareup.picasso.Picasso;
-
-import java.net.URI;
 
 
 /**
@@ -62,11 +61,16 @@ public class DetailsActivity extends AppCompatActivity {
                     ContentValues cv = new ContentValues();
                     cv.put(MoviesContract.MovieEntry._ID,movieDetails.id);
                     cv.put(MoviesContract.MovieEntry.COLUMN_TITLE,movieDetails.title);
+                    cv.put(MoviesContract.MovieEntry.COLUMN_RELEASED,movieDetails.released);
+                    cv.put(MoviesContract.MovieEntry.COLUMN_POSTER,movieDetails.poster);
+                    cv.put(MoviesContract.MovieEntry.COLUMN_AVG_VOTE,movieDetails.avg_vote);
+                    cv.put(MoviesContract.MovieEntry.COLUMN_SYNOPSIS,movieDetails.synopsis);
                     getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI,cv);
                 } else {
                     String where = MoviesContract.MovieEntry._ID + "=?";
                     String[] selectionArgs = {movieDetails.id.toString()};
-                    getContentResolver().delete(MoviesContract.MovieEntry.CONTENT_URI,where,selectionArgs);
+                    Uri currentItemUri = ContentUris.withAppendedId(MoviesContract.MovieEntry.CONTENT_URI,movieDetails.id);
+                    getContentResolver().delete(currentItemUri,where,selectionArgs);
                 }
             }
         });
@@ -79,18 +83,17 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public boolean favourite(Integer id){
-        /*Cursor c1 =getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI,null,null,null,null);
-        Log.v("**********************",c1.getString(c1.getColumnIndex("_id")));*/
         String[] projection = {MoviesContract.MovieEntry._ID};
         String selection = MoviesContract.MovieEntry._ID + "=?";
         String[] selectionArgs = {id.toString()};
         Cursor cursor = getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI,projection,selection,selectionArgs,null);
         if (cursor == null || cursor.getCount() < 1) {
-            //Log.v("++++++++++++++++++++","nem jo");
+            cursor.close();
             return false;
         } else {
-            //Log.v("--------------------",cursor.getString(cursor.getColumnIndex("_id")));
+            cursor.close();
             return true;
         }
     }
+
 }

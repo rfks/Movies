@@ -2,6 +2,13 @@ package com.example.rfks.movies;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+
+import com.example.rfks.movies.data.MoviesContract;
+import com.example.rfks.movies.data.MoviesProvider;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +38,7 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
         mUrl = url;
     }
 
+
     @Override
     protected void onStartLoading() {
         forceLoad();
@@ -44,10 +52,8 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
         if (mUrl == null) {
             return null;
         }
-
         // Perform the network request, parse the response, and extract a list of movies.
-        List<Movie> movies = Utils.fetchMovieData(mUrl);
-        return movies;
+        return Utils.fetchMovieData(mUrl);
     }
 }
 

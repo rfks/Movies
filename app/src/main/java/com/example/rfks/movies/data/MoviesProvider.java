@@ -230,11 +230,7 @@ public class MoviesProvider extends ContentProvider {
 
                         MoviesContract.MovieEntry.TABLE_MOVIES, selection, selectionArgs);
 
-                // reset _ID
 
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
-
-                        MoviesContract.MovieEntry.TABLE_MOVIES + "'");
 
                 break;
 
@@ -247,10 +243,10 @@ public class MoviesProvider extends ContentProvider {
                         new String[]{String.valueOf(ContentUris.parseId(uri))});
 
                 // reset _ID
-
+/*
                 db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
 
-                        MoviesContract.MovieEntry.TABLE_MOVIES + "'");
+                        MoviesContract.MovieEntry.TABLE_MOVIES + "'");*/
 
 
                 break;

@@ -29,7 +29,13 @@ public class MoviesContract {
 
             public static final String COLUMN_TITLE = "title";
 
+            public static final String COLUMN_RELEASED = "released";
 
+            public static final String COLUMN_POSTER = "poster";
+
+            public static final String COLUMN_AVG_VOTE = "avg_vote";
+
+            public static final String COLUMN_SYNOPSIS = "synopsis";
 
             // create content uri
 

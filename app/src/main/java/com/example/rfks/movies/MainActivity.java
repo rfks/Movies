@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.example.rfks.movies.data.MoviesContract;
 import com.facebook.stetho.Stetho;
 
 import java.util.ArrayList;
@@ -25,9 +27,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Movie>>,
-        SharedPreferences.OnSharedPreferenceChangeListener
-{
-    
+        SharedPreferences.OnSharedPreferenceChangeListener {
+
     private static final String LOG_TAG = MainActivity.class.getName();
 
     /**
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity
      */
     private static final int MOVIE_LOADER_ID = 1;
 
-    static String API_KEY=BuildConfig.MOVIE_DB_API_KEY;
+    static String API_KEY = BuildConfig.MOVIE_DB_API_KEY;
     /**
      * Adapter for the list of movies
      */
@@ -120,6 +121,18 @@ public class MainActivity extends AppCompatActivity
             // Update empty state with no connection error message
             mEmptyStateTextView.setText(R.string.no_internet_connection);
         }
+
+        if (prefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        ).equals("Favourite")) {
+            List<Movie> movies = getMovieDataFromDB();
+            if (!movies.isEmpty()) {
+                mAdapter.addAll(movies);
+            } else mEmptyStateTextView.setText(R.string.no_movies);
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -135,8 +148,17 @@ public class MainActivity extends AppCompatActivity
             View loadingIndicator = findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.VISIBLE);
 
-            // Restart the loader to requery the guardian as the query settings have been updated
-            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+            if (key.equals("Favourite")) {
+                List<Movie> movies = getMovieDataFromDB();
+                if (!movies.isEmpty()) {
+                    mAdapter.addAll(movies);
+                } else mEmptyStateTextView.setText(R.string.no_movies);
+                loadingIndicator.setVisibility(View.GONE);
+            } else
+                // Restart the loader to requery the movies as the query settings have been updated
+                getLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+
+
         }
     }
 
@@ -149,12 +171,16 @@ public class MainActivity extends AppCompatActivity
                 getString(R.string.settings_order_by_default)
         );
 
-        Uri baseUri = Uri.parse(THEMOVIEDB_URL+orderBy);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+        if (!orderBy.equals("Favourite")) {
 
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
 
-        return new MovieLoader(this, uriBuilder.toString());
+            Uri baseUri = Uri.parse(THEMOVIEDB_URL + orderBy);
+            Uri.Builder uriBuilder = baseUri.buildUpon();
+
+            uriBuilder.appendQueryParameter("api_key", API_KEY);
+
+            return new MovieLoader(this, uriBuilder.toString());
+        } else return null;
     }
 
     @Override
@@ -197,5 +223,42 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        if (orderBy.equals("Favourite")) {
+            mAdapter.clear();
+            List<Movie> movies = getMovieDataFromDB();
+            if (!movies.isEmpty()) {
+                mAdapter.addAll(movies);
+            } else mEmptyStateTextView.setText(R.string.no_movies);
+        }
+    }
+
+    public List<Movie> getMovieDataFromDB() {
+        List<Movie> movies = new ArrayList<>();
+        Cursor cursor = getApplicationContext().getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI, null, null, null, null);
+        if (cursor == null || cursor.getCount() < 1) return movies;
+        else
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("_id"));
+                String title = cursor.getString(cursor.getColumnIndex("title"));
+                String release = cursor.getString(cursor.getColumnIndex("released"));
+                String poster = cursor.getString(cursor.getColumnIndex("poster"));
+                String avg_vote = cursor.getString(cursor.getColumnIndex("avg_vote"));
+                String synopsis = cursor.getString(cursor.getColumnIndex("synopsis"));
+                movies.add(new Movie(id, title, release, poster, avg_vote, synopsis));
+            }
+        ;
+        cursor.close();
+        return movies;
     }
 }
