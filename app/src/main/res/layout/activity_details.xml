@@ -55,5 +55,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/poster"
             android:text="TextView" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailers_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/synopsis" />
     </RelativeLayout>
 </ScrollView>

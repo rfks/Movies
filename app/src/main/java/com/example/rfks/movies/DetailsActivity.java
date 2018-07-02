@@ -7,14 +7,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rfks.movies.data.MoviesContract;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 /**
@@ -72,6 +82,35 @@ public class DetailsActivity extends AppCompatActivity {
                     Uri currentItemUri = ContentUris.withAppendedId(MoviesContract.MovieEntry.CONTENT_URI,movieDetails.id);
                     getContentResolver().delete(currentItemUri,where,selectionArgs);
                 }
+            }
+        });
+
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.trailers_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        /*Create handle for the RetrofitInstance interface*/
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.themoviedb.org/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        GetData service = retrofit.create(GetData.class);
+        Call<TrailerResponse> call = service.getTrailers(movieDetails.id,BuildConfig.MOVIE_DB_API_KEY);
+        call.enqueue(new Callback<TrailerResponse>() {
+            @Override
+            public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
+                //List<Trailer> trailers = response.body().getResults();
+                int statusCode = response.code();
+                List<Trailer> trailers = response.body().getResults();
+                recyclerView.setAdapter(new TrailerAdapter(trailers, R.layout.trailer_list_item, getApplicationContext()));
+
+            }
+
+            @Override
+            public void onFailure(Call<TrailerResponse> call, Throwable t) {
+                // Log error here since request failed
+                //Log.e(TAG, t.toString());
             }
         });
     }
