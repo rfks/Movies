@@ -23,13 +23,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Converter;
-import retrofit2.Retrofit;
-import retrofit2.Call;
-import retrofit2.Response;
-//import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+
 
 /**
  * Created by rfks on 24/03/2018.
@@ -141,12 +135,6 @@ public class Utils {
         return output.toString();
     }
 
-    static class JsonStringConverterFactory extends Converter.Factory {
-        private final Converter.Factory delegateFactory;
-        JsonStringConverterFactory(Converter.Factory delegateFactory) {
-            this.delegateFactory = delegateFactory;
-        }
-    }
 
     /**
      * Return a list of {@link Movie} objects that has been built up from
@@ -196,14 +184,6 @@ public class Utils {
 
                 // Extract the value for the key called "overview"
                 String synopsis = currentMovie.getString("overview");
-
-                //get url for videos
-            /*    Retrofit retrofit = new Retrofit().baseUrl(Uri.parse(url.toString().replace(url.getPath().toString(),"/3/movie/"+id+"/videos")))
-                        .addConverterFactory(new JsonStringConverterFactory(GsonConverterFactory.create()))
-                        .build();
-*/
-
-
 
                 // Create a new {@link Movie} object with the details from the JSON response.
                 Movie movie = new Movie(id, title, released, poster, avg_vote, synopsis);

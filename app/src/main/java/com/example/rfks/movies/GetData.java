@@ -12,4 +12,6 @@ public interface GetData {
     @GET("/3/movie/{id}/videos")
     Call<TrailerResponse> getTrailers(@Path("id") Integer id,@Query("api_key") String api_key);
 
+    @GET("/3/movie/{id}/reviews")
+    Call<ReviewResponse> getReviews(@Path("id") Integer id,@Query("api_key") String api_key);
 }

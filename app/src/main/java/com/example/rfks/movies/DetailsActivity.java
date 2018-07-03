@@ -88,6 +88,9 @@ public class DetailsActivity extends AppCompatActivity {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.trailers_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        final RecyclerView recyclerView2 = (RecyclerView) findViewById(R.id.reviews_recycler_view);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this));
+
 
         /*Create handle for the RetrofitInstance interface*/
         Retrofit retrofit = new Retrofit.Builder()
@@ -100,15 +103,29 @@ public class DetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
-                //List<Trailer> trailers = response.body().getResults();
                 int statusCode = response.code();
                 List<Trailer> trailers = response.body().getResults();
                 recyclerView.setAdapter(new TrailerAdapter(trailers, R.layout.trailer_list_item, getApplicationContext()));
-
             }
 
             @Override
             public void onFailure(Call<TrailerResponse> call, Throwable t) {
+                // Log error here since request failed
+                //Log.e(TAG, t.toString());
+            }
+        });
+
+        Call<ReviewResponse> call2 = service.getReviews(movieDetails.id,BuildConfig.MOVIE_DB_API_KEY);
+        call2.enqueue(new Callback<ReviewResponse>() {
+            @Override
+            public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
+                int statusCode = response.code();
+                List<Review> reviews = response.body().getResults();
+                recyclerView2.setAdapter(new ReviewAdapter(reviews, R.layout.review_list_item, getApplicationContext()));
+            }
+
+            @Override
+            public void onFailure(Call<ReviewResponse> call, Throwable t) {
                 // Log error here since request failed
                 //Log.e(TAG, t.toString());
             }
