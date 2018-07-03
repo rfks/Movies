@@ -85,11 +85,11 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.trailers_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final RecyclerView trailersRecyclerView = (RecyclerView) findViewById(R.id.trailers_recycler_view);
+        trailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        final RecyclerView recyclerView2 = (RecyclerView) findViewById(R.id.reviews_recycler_view);
-        recyclerView2.setLayoutManager(new LinearLayoutManager(this));
+        final RecyclerView reviewsRecyclerView = (RecyclerView) findViewById(R.id.reviews_recycler_view);
+        reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         /*Create handle for the RetrofitInstance interface*/
@@ -105,7 +105,7 @@ public class DetailsActivity extends AppCompatActivity {
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
                 int statusCode = response.code();
                 List<Trailer> trailers = response.body().getResults();
-                recyclerView.setAdapter(new TrailerAdapter(trailers, R.layout.trailer_list_item, getApplicationContext()));
+                trailersRecyclerView.setAdapter(new TrailerAdapter(trailers, R.layout.trailer_list_item, getApplicationContext()));
             }
 
             @Override
@@ -115,13 +115,14 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
+
         Call<ReviewResponse> call2 = service.getReviews(movieDetails.id,BuildConfig.MOVIE_DB_API_KEY);
         call2.enqueue(new Callback<ReviewResponse>() {
             @Override
             public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
                 int statusCode = response.code();
                 List<Review> reviews = response.body().getResults();
-                recyclerView2.setAdapter(new ReviewAdapter(reviews, R.layout.review_list_item, getApplicationContext()));
+                reviewsRecyclerView.setAdapter(new ReviewAdapter(reviews, R.layout.review_list_item, getApplicationContext()));
             }
 
             @Override
